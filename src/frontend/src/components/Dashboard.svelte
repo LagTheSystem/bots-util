@@ -7,6 +7,7 @@
       description: 'Clear and restore the desktop folder from a zip archive',
       icon: '🗂',
       dangerous: false,
+      eventName: 'desktop',
       action: () => window.go.main.App.RunDesktopCleanup(),
     },
     {
@@ -14,6 +15,7 @@
       description: 'Force-install the Chrome extension via registry policy',
       icon: '🧩',
       dangerous: false,
+      eventName: 'chrome',
       action: () => window.go.main.App.RunChromeInstall(),
     },
     {
@@ -21,6 +23,7 @@
       description: 'Run DISM, SFC, and other system repair utilities',
       icon: '🔧',
       dangerous: true,
+      eventName: 'repair',
       action: () => window.go.main.App.RunSystemRepair(),
     },
     {
@@ -28,6 +31,7 @@
       description: 'Apply group policy and registry settings',
       icon: '📋',
       dangerous: true,
+      eventName: 'policy',
       action: () => window.go.main.App.ApplyPolicySettings(),
     },
   ]
@@ -45,6 +49,7 @@
         description={action.description}
         icon={action.icon}
         dangerous={action.dangerous}
+        eventName={action.eventName}
         action={action.action}
       />
     {/each}

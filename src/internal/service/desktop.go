@@ -38,8 +38,12 @@ func (s *DesktopService) Run(ctx context.Context, progress func(string, float64)
 
 	if err := s.downloader.Download(ctx, s.config.ZipURL, zipPath, func(bytes, total int64) {
 		if progress != nil {
-			pct := 0.05 + 0.65*(float64(bytes)/float64(total))
-			progress(fmt.Sprintf("downloading... %d/%d bytes", bytes, total), pct)
+			if total > 0 {
+				pct := 0.05 + 0.65*(float64(bytes)/float64(total))
+				progress(fmt.Sprintf("downloading... %d/%d bytes", bytes, total), pct)
+			} else {
+				progress(fmt.Sprintf("downloading... %d bytes", bytes), 0.05)
+			}
 		}
 	}); err != nil {
 		return fmt.Errorf("desktop: download zip: %w", err)

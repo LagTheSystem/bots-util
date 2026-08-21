@@ -9,6 +9,7 @@ import (
 	"bots-util/internal/pkg/registry"
 	"bots-util/internal/pkg/syscmd"
 	"bots-util/internal/service"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
@@ -46,6 +47,14 @@ func (a *App) Startup(ctx context.Context) {
 	)
 
 	a.handler = handler.NewHandler(desktopSvc, chromeSvc, repairSvc, policySvc)
+
+	a.handler.SetEmitter(func(action, msg string, pct float64) {
+		runtime.EventsEmit(a.ctx, "progress", map[string]interface{}{
+			"action": action,
+			"msg":    msg,
+			"pct":    pct,
+		})
+	})
 }
 
 func (a *App) Shutdown(ctx context.Context) {

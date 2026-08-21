@@ -25,6 +25,7 @@ type Handler struct {
 	chrome  ChromeService
 	repair  RepairService
 	policy  PolicyService
+	emit    func(action, msg string, pct float64)
 }
 
 func NewHandler(d DesktopService, c ChromeService, r RepairService, p PolicyService) *Handler {
@@ -36,32 +37,43 @@ func NewHandler(d DesktopService, c ChromeService, r RepairService, p PolicyServ
 	}
 }
 
+func (h *Handler) SetEmitter(emit func(action, msg string, pct float64)) {
+	h.emit = emit
+}
+
+func (h *Handler) emitProgress(action, msg string, pct float64) {
+	if h.emit != nil {
+		h.emit(action, msg, pct)
+	}
+}
+
 func (h *Handler) RunDesktopCleanup() error {
 	ctx := context.Background()
 	return h.desktop.Run(ctx, func(msg string, pct float64) {
-		// TODO: emit via Wails runtime.EventsEmit in app.go wiring
-		_ = msg
-		_ = pct
+		h.emitProgress("desktop", msg, pct)
 	})
 }
 
 func (h *Handler) RunChromeInstall() error {
 	ctx := context.Background()
-	return h.chrome.Install(ctx)
+	h.emitProgress("chrome", "installing chrome extension", 0)
+	if err := h.chrome.Install(ctx); err != nil {
+		return err
+	}
+	h.emitProgress("chrome", "done", 1)
+	return nil
 }
 
 func (h *Handler) RunSystemRepair() error {
 	ctx := context.Background()
 	return h.repair.RunAll(ctx, func(msg string, pct float64) {
-		_ = msg
-		_ = pct
+		h.emitProgress("repair", msg, pct)
 	})
 }
 
 func (h *Handler) ApplyPolicySettings() error {
 	ctx := context.Background()
 	return h.policy.Apply(ctx, func(msg string, idx int) {
-		_ = msg
-		_ = idx
+		h.emitProgress("policy", msg, float64(idx))
 	})
 }

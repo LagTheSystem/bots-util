@@ -1,4 +1,5 @@
 <script>
+  import { onMount, onDestroy } from 'svelte'
   import ProgressLog from './ProgressLog.svelte'
 
   export let title = ''
@@ -6,23 +7,38 @@
   export let icon = '⚙'
   export let dangerous = false
   export let action = null
+  export let eventName = ''
 
   let state = 'idle' // idle | running | success | error | cancelled
   let logLines = []
   let percent = 0
   let errorMessage = ''
+  let off = null
 
   function addLog(msg) {
     logLines = [...logLines, msg]
   }
+
+  onMount(() => {
+    if (window.runtime && window.runtime.EventsOn) {
+      off = window.runtime.EventsOn('progress', (data) => {
+        if (data.action === eventName) {
+          addLog(data.msg)
+          percent = Math.round(data.pct * 100)
+        }
+      })
+    }
+  })
+
+  onDestroy(() => {
+    if (off && typeof off === 'function') off()
+  })
 
   async function handleRun() {
     state = 'running'
     logLines = []
     percent = 0
     errorMessage = ''
-
-    window.go.main.App.Log = (msg) => addLog(msg)
 
     try {
       await action()
