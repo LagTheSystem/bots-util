@@ -15,9 +15,9 @@ func New() *RegistryImpl {
 }
 
 func (r *RegistryImpl) SetDWORD(key, name string, value uint32) error {
-	k, err := registry.OpenKey(registry.LOCAL_MACHINE, key, registry.SET_VALUE)
+	k, _, err := registry.CreateKey(registry.LOCAL_MACHINE, key, registry.SET_VALUE)
 	if err != nil {
-		return fmt.Errorf("registry: open key %s: %w", key, err)
+		return fmt.Errorf("registry: open or create key %s: %w", key, err)
 	}
 	defer k.Close()
 
@@ -28,9 +28,9 @@ func (r *RegistryImpl) SetDWORD(key, name string, value uint32) error {
 }
 
 func (r *RegistryImpl) SetString(key, name, value string) error {
-	k, err := registry.OpenKey(registry.LOCAL_MACHINE, key, registry.SET_VALUE)
+	k, _, err := registry.CreateKey(registry.LOCAL_MACHINE, key, registry.SET_VALUE)
 	if err != nil {
-		return fmt.Errorf("registry: open key %s: %w", key, err)
+		return fmt.Errorf("registry: open or create key %s: %w", key, err)
 	}
 	defer k.Close()
 
