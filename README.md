@@ -1,7 +1,7 @@
 # bots-util
+[![Build](https://github.com/LagTheSystem/bots-util/actions/workflows/build.yml/badge.svg)](https://github.com/LagTheSystem/bots-util/actions/workflows/build.yml)
 
 Desktop utility for camp setup.
-
 A Windows desktop app built with **Go** (backend) + **Wails v2** (desktop shell) + **Svelte** (UI). It provides four independent actions from a dashboard:
 
 - **Desktop Cleanup** — clear a folder on the Desktop and restore its contents from a downloaded zip
