@@ -77,7 +77,7 @@ func TestPolicyServiceApply(t *testing.T) {
 
 	svc := NewPolicyService(cfg, mock)
 	progress := make([]string, 0)
-	err := svc.Apply(context.Background(), func(msg string, idx int) {
+	err := svc.Apply(context.Background(), func(msg string, pct float64) {
 		progress = append(progress, msg)
 	})
 

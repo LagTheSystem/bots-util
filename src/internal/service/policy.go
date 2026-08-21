@@ -18,13 +18,15 @@ func NewPolicyService(cfg config.PolicyConfig, reg registry.Registry) *PolicySer
 	return &PolicyService{config: cfg, reg: reg}
 }
 
-func (s *PolicyService) Apply(ctx context.Context, progress func(string, int)) error {
+func (s *PolicyService) Apply(ctx context.Context, progress func(string, float64)) error {
 	if len(s.config.RegistryEntries) == 0 {
 		if progress != nil {
-			progress("no registry entries to apply", 0)
+			progress("no registry entries to apply", 1.0)
 		}
 		return nil
 	}
+
+	total := float64(len(s.config.RegistryEntries))
 
 	var errs []string
 
@@ -54,12 +56,12 @@ func (s *PolicyService) Apply(ctx context.Context, progress func(string, int)) e
 			msg := fmt.Sprintf("failed to set %s\\%s: %v", entry.KeyPath, entry.Name, err)
 			errs = append(errs, msg)
 			if progress != nil {
-				progress(msg, i)
+				progress(msg, float64(i+1)/total)
 			}
 		} else {
 			msg := fmt.Sprintf("set %s\\%s", entry.KeyPath, entry.Name)
 			if progress != nil {
-				progress(msg, i)
+				progress(msg, float64(i+1)/total)
 			}
 		}
 	}

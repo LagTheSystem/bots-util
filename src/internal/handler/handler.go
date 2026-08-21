@@ -17,7 +17,7 @@ type RepairService interface {
 }
 
 type PolicyService interface {
-	Apply(ctx context.Context, progress func(string, int)) error
+	Apply(ctx context.Context, progress func(string, float64)) error
 }
 
 type Handler struct {
@@ -73,7 +73,7 @@ func (h *Handler) RunSystemRepair() error {
 
 func (h *Handler) ApplyPolicySettings() error {
 	ctx := context.Background()
-	return h.policy.Apply(ctx, func(msg string, idx int) {
-		h.emitProgress("policy", msg, float64(idx))
+	return h.policy.Apply(ctx, func(msg string, pct float64) {
+		h.emitProgress("policy", msg, pct)
 	})
 }

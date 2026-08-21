@@ -40,10 +40,10 @@ func (m *mockRepairService) RunAll(ctx context.Context, progress func(string, fl
 }
 
 type mockPolicyService struct {
-	applyFunc func(ctx context.Context, progress func(string, int)) error
+	applyFunc func(ctx context.Context, progress func(string, float64)) error
 }
 
-func (m *mockPolicyService) Apply(ctx context.Context, progress func(string, int)) error {
+func (m *mockPolicyService) Apply(ctx context.Context, progress func(string, float64)) error {
 	if m.applyFunc != nil {
 		return m.applyFunc(ctx, progress)
 	}
@@ -130,9 +130,9 @@ func TestHandlerRunSystemRepair(t *testing.T) {
 func TestHandlerApplyPolicySettings(t *testing.T) {
 	called := false
 	policy := &mockPolicyService{
-		applyFunc: func(ctx context.Context, progress func(string, int)) error {
+		applyFunc: func(ctx context.Context, progress func(string, float64)) error {
 			called = true
-			progress("setting policy", 0)
+			progress("setting policy", 0.0)
 			return nil
 		},
 	}
