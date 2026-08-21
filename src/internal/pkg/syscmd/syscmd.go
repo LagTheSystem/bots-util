@@ -49,6 +49,9 @@ func (r *Runner) Run(ctx context.Context, cmd Command, cb LineCallback) error {
 			cb(scanner.Text())
 		}
 	}
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("syscmd: %s: read output: %w", cmd.Name, err)
+	}
 
 	waitErr := c.Wait()
 
